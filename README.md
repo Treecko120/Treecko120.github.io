@@ -1,2 +1,2 @@
 # Treecko120.github.io
-My home page
+This really isn't an important repo. You should ignore it.
