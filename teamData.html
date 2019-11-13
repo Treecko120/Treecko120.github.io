@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html>
+<!--<![endif]-->
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Green Bean Casserole | Team Data Lookup</title>
+        <meta name="description" content="This is the 2019 FRC 1736 Scouting Application, for use in the FIRST Deep Space game">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="css/main.css">
+
+        <style type="text/css">
+            #div1,
+            #div2 {
+                float: left;
+                width: 64px;
+                height: 64px;
+                margin: 10px;
+                padding: 10px;
+                border: 1px solid #aaaaaa;
+            }
+
+            #teamDisp {
+                padding: 20px;
+            }
+
+            #basicData, th, td {
+                border: 1px solid #FF9933;
+            }
+
+            li {
+                display: list-item;
+            }
+
+        </style>
+
+        <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+
+    </head>
+
+    <body>
+
+        <div id="teamLabel">
+            Team Number
+            <br>
+        </div>
+        <div id="teamDisp" onchange="getTeamData();">
+            <input type="tel" id="teamNumber" placeholder="0">
+            <br>
+        </div>
+
+        <div id="teamData">
+            <table id="basicData">
+                <tr>
+                    <td>Sandstorm Exit HAB %</td>
+                </tr>
+                <tr>
+                    <td>Sandstorm Level 2 Start Count</td>
+                </tr>
+                <tr>
+                    <td>Sandstorm Avg Hatces Placed</td>
+                </tr>
+                <tr>
+                    <td>Sandstorm Avg Cargo Placed</td>
+                </tr>
+                <tr>
+                    <td>Teleop Avg Hatches Placed Low</td>
+                </tr>
+                <tr>
+                    <td>Teleop Avg Hatches Placed Mid</td>
+                </tr>
+                <tr>
+                    <td>Teleop Avg Hatches Placed High</td>
+                </tr>
+                <tr>
+                    <td>Teleop Avg Cargo Placed Low</td>
+                </tr>
+                <tr>
+                    <td>Teleop Avg Cargo Placed Mid</td>
+                </tr>
+                <tr>
+                    <td>Teleop Avg Cargo Placed High</td>
+                </tr>
+                <tr>
+                    <td>Successful Level 1 Climbs</td>
+                </tr>
+                <tr>
+                    <td>Successful Level 2 Climbs</td>
+                </tr>
+                <tr>
+                    <td>Successful Level 3 Climbs</td>
+                </tr>
+                <tr>
+                    <td>Died/No Show %</td>
+                </tr>
+                <tr>
+                    <td>Overall Rating Avg</td>
+                </tr>
+            </table>
+
+            <br>
+            <div>
+                Comments
+                <br>
+            </div>
+            <ul id="Comments">
+
+            </ul>
+        </div>
+
+
+        <script type="text/javascript">
+            function getTeamData() {
+                //Clear out existing data first
+                var tbl = document.getElementById("basicData");
+                for(var r = 0; r < tbl.rows.length; r++) {
+                    var tr = tbl.rows[r];
+                    while(tr.cells.length > 1) {
+                        tr.deleteCell(-1);
+                    }
+                }
+                var ul = document.getElementById("Comments");
+                while(ul.firstChild) {
+                    ul.removeChild(ul.firstChild);
+                }
+
+                var xmlhttp = new XMLHttpRequest();
+
+                xmlhttp.onreadystatechange = function()
+                {
+                    if(xmlhttp.readyState == 4)
+                    {
+                        teamNum = 0;
+                        if(xmlhttp.status == 200)
+                        {
+                           var results = JSON.parse(xmlhttp.response);
+                           var arr = results[0];
+                           var comments = results[1];
+                           var tbl = document.getElementById("basicData");
+                           for(var r = 0; r < tbl.rows.length; r++) {
+                                var tr = tbl.rows[r];
+                                var cell = tr.insertCell(-1);
+                                if(arr[r] == null)
+                                    cell.innerHTML = "0";
+                                else
+                                    cell.innerHTML = arr[r];
+                           }
+                           var ul = document.getElementById("Comments");
+                           if(comments != null) {
+                               for(var c = 0; c < comments.length; c++) {
+                                    var li = document.createElement("li");
+                                    li.appendChild(document.createTextNode(comments[c]));
+                                    ul.appendChild(li);
+                                }
+                            }
+                        }
+                    }
+                };
+
+                var teamNumber = document.getElementById("teamNumber").value;
+                var sendData = "?teamNumber=" + teamNumber;
+                xmlhttp.open("GET", "teamData.php" + sendData, true);
+                xmlhttp.send();
+            }
+        </script>
+
+
+    </body>
+
+</html>

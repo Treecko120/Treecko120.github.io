@@ -1,20 +1,502 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
 <html>
-  
-<head>
-  
-<meta>
-<script type="text/javascript" src="Treecko120.github.io/js/Countdown.js"></script>
-<link rel="stylesheet" href="Treecko120.github.io/css/Main.css">
-<Title> Home Page </Title>
-  
-</head>
-  
-<body>
+<!--<![endif]-->
 
-<p id="timer"></p>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Green Bean Casserole | FRC 1736</title>
+        <meta name="description" content="This is the 2017 FRC 1736 Scouting Application, for use in the FIRST Steamworks game">
+        <meta name="vieport" content="width=device-width">
 
-</body>
+        <link rel="stylesheet" href="css/main.css">
 
-<a href="xkiframe.html">XKCD</a>
+        <style type="text/css">
+            #div1,
+            #div2 {
+                float: left;
+                width: 64px;
+                height: 64px;
+                margin: 10px;
+                padding: 10px;
+                border: 1px solid #aaaaaa;
+            }
 
+        </style>
+
+        <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+
+    </head>
+
+    <body>
+        <h1>Green Bean Casserole: Match Scouting System</h1>
+        <div id="teamLabel">
+            Team Number
+            <br>
+        </div>
+        <div id="teamDisp">
+            <input type="tel" id="teamNumber" placeholder="0">
+            <br>
+        </div>
+        <ul class='tabs'>
+            <li><a href='#MatchData' id="MatchDataLink">Match Info</a>
+            </li>
+            <li><a href='#SandstormData' id="SandstormDataLink">Sandstorm</a>
+            </li>
+            <li><a href='#TeleoperatedData' id="TeleoperatedDataLink">Teleop</a>
+            </li>
+            <li><a href='#PostMatch' id="MatchDataButton">Post Match</a>
+            </li>
+            <li><a href='#MatchHistory' id="MatchHistoryLink">Match History</a>
+            </li>
+            <li><a href='#About' id="AboutLink">About</a>
+            </li>
+        </ul>
+
+
+        <div id="MatchData">
+            <!-- ------------------------------ -->
+            <!-- ----------Match Data---------- -->
+            <!-- ------------------------------ -->
+            <div id="matchTitles">
+                Scout Name
+                <br><br>
+                Match Number
+                <br><br>
+                Match Type
+                <br><br>
+                Scouting Station
+            </div>
+            <div id="matchFields">
+                <input type="text" id="scoutName" placeholder="event_yourName">
+                <br>
+                <input type="tel" id="matchNumber" placeholder="0" onchange="idScoutingStation()">
+                <br>
+                <select id="matchType">
+                      <option value="Qualification">Qualification</option>
+                      <option value="Practice">Practice</option>
+                      <option value="Elimination">Elimination</option>
+                </select>
+                <br>
+                <select id="whichRobot"onchange="idScoutingStation()">
+                    <option value="R1">Red 1</option>
+                    <option value="R2">Red 2</option>
+                    <option value="R3">Red 3</option>
+                    <option value="B1">Blue 1</option>
+                    <option value="B2">Blue 2</option>
+                    <option value="B3">Blue 3</option>
+              </select>
+            </div>
+        </div>
+
+
+        <div id="SandstormData">
+            <!-- ------------------------------------- -->
+            <!-- ----------Sandstorm Period---------- -->
+            <!-- ------------------------------------- -->
+
+            <!-- Need to add starting location selector here -->
+            <div id=fuelAndGears>
+                <div id="sandstormScoring"></div>
+                    <div id="sandstormScoring_left" >
+                        <h3>Starting Position</h3>
+                        <div class="tooltip">
+                        <form action=" ">
+                            <input id="startingPositionLevel1" type="radio" name="position"> Level 1<br>
+                            <input id="startingPositionLevel2" type="radio" name="position"> Level 2<br>
+                        </form>
+                        <span class="tooltiptext">What level did they start at?</span></div>
+                        <br>
+                        <div class="tooltip">
+	                    Exited HAB Zone?: <input type="checkbox" id="exitHAB" onchange="updateData();">
+	                    <span class="tooltiptext">Did they fully exit the HAB zone in Sandstorm?</span></div>
+	                    <br> 
+					</div>
+                    </div>
+                    <div id="sandstormScoring_center" >
+							<h3>Scoring</h3>
+							<table id="sandstormScoringTable" >
+								<td id="sandstormHatches" >
+									<h4>Hatches:</h4>
+									<div id="sandstormHatchesInCargoShip" >Cargo Ship:
+										<br>
+										<div class="tooltip">
+										<button onclick="hatchScore('sandstorm', 'hatch cargo ship', 1);">Hatch (A)</button>
+										<br>
+										Hatch In Cargo Ship Scored: <a id="hatchInCargoShipScoredSandstormDisplay">0</a>
+										<span class="tooltiptext">Did they place hatch on cargo ship?</span></div>
+									</div>
+									<h6></h6>
+									<div id="sandstormHatchesInRocket" >Rocket:
+										<br>
+										<div class="tooltip">
+										<button onclick="hatchScore('sandstorm', 'hatch low', 1);">Hatch Low (S)</button>
+										<br>
+										Hatch In Low Rocket Scored: <a id="hatchInLowRocketScoredSandstormDisplay">0</a>
+										<span class="tooltiptext">Did they place hatch on lowest level of rocket?</span></div>
+										<br>
+										<div class="tooltip">
+										<button onclick="hatchScore('sandstorm', 'hatch middle', 1);">Hatch Middle (D)</button>
+										<br>
+										Hatch In Middle Rocket Scored: <a id="hatchInMiddleRocketScoredSandstormDisplay">0</a>
+										<span class="tooltiptext">Did they place hatch on middle level of rocket?</span></div>
+										<br>
+										<div class="tooltip">
+										<button onclick="hatchScore('sandstorm', 'hatch high', 1);">Hatch High (F)</button>
+										<br>
+										Hatch In High Rocket Scored: <a id="hatchInHighRocketScoredSandstormDisplay">0</a>
+										<span class="tooltiptext">Did they place hatch on highest level of rocket?</span></div>
+									</div>
+									<br>
+									<h1></h1>
+									<div class="tooltip">
+									<button onclick="drop('sandstorm', 1);">Drop (Space)</button>
+									<br>
+									Items Dropped: <a id="itemsDroppedSandstormDisplay">0</a>
+									<span class="tooltiptext">Did they drop the object they were carrying?</span></div>
+								</td>
+								<td id="sandstormCargo" >
+									<h4>Cargo:</h4>
+									<div id="sandstormCargoInCargoShip" >Cargo Ship:
+										<br>
+										<div class="tooltip">
+										<button onclick="cargoScore('sandstorm', 'cargo ship', 1);">Cargo (Q)</button>
+										<br>
+										Cargo In Cargo Ship Scored: <a id="cargoInCargoShipScoredSandstormDisplay">0</a>
+										<span class="tooltiptext">Did they place cargo in cargo ship?</span></div>
+									</div>
+									<h6></h6>
+									<div id="sandstormCargoInRocket" >Rocket:
+										<br>
+										<div class="tooltip">
+										<button onclick="cargoScore('sandstorm', 'cargo low', 1);">Cargo Low (W)</button>
+										<br>
+										Cargo In Low Rocket Scored: <a id="cargoInLowRocketScoredSandstormDisplay">0</a>
+										<span class="tooltiptext">Did they place cargo in lowest level of rocket?</span></div>
+										<br>
+										<div class="tooltip">
+										<button onclick="cargoScore('sandstorm', 'cargo middle', 1);">Cargo Middle (E)</button>
+										<br>
+										Cargo In Middle Rocket Scored: <a id="cargoInMiddleRocketScoredSandstormDisplay">0</a>
+										<span class="tooltiptext">Did they place cargo in middle level of rocket?</span></div>
+										<br>
+										<div class="tooltip">
+										<button onclick="cargoScore('sandstorm', 'cargo high', 1);">Cargo High (R)</button>
+										<br>
+										Cargo In High Rocket Scored: <a id="cargoInHighRocketScoredSandstormDisplay">0</a>
+										<span class="tooltiptext">Did they place cargo in highest level of rocket?</span></div>
+									</div>
+									<br>
+									<h1></h1>
+									<div class="tooltip">
+									<button onclick="undoScore('sandstorm');">Undo Score (Z)</button>
+									<span class="tooltiptext">For when you make the mistakes relating to score.</span></div>
+									<br>
+									<div class="tooltip">
+									<button onclick="undoDrop('sandstorm');">Undo Drop (C)</button>
+									<span class="tooltiptext">For when you make the mistakes relating to dropping stuff.</span></div>
+								</td>
+							</table>
+							<br>
+					</div>
+                    <div id="sandstormScoring_right">
+                        <h3>Penalties</h3>
+                        <div class="tooltip">
+                        <button onclick="penalty('sandstorm', 'penalty');">Penalty (J)</button>
+                        <span class="tooltiptext">Did the robot get a penalty?</span></div>
+                        <div class="tooltip">
+                        <button onclick="penalty('sandstorm', 'technical');">Technical Foul (K)</button>
+                        <span class="tooltiptext">Did the robot get a tech foul?</span></div>
+                        <br>
+                        <a>Penalties: </a><a id="penaltyDisplaySandstorm">0</a>
+                        <br>
+                        <a>Technical Fouls: </a><a id="technicalDisplaySandstorm">0</a>
+                        <br>
+                        <div class="tooltip">
+                        <button onclick="undoPenalty();">Undo Penalty (X)</button>
+                        <span class="tooltiptext">For when you accidentally gave out a foul.</span></div>
+                    </div>
+                </div>
+            </div>   
+        </div>
+
+
+        <div id="TeleoperatedData">
+            <!-- --------------------------------------- -->
+            <!-- ----------Teleoperated Period---------- -->
+            <!-- --------------------------------------- -->
+
+            <div id="teleopScoring">
+                <div id="teleopScoring_left" >
+                    <h3>Scoring</h3>
+					<table id="teleopScoringTable" >
+						<td id="teleopHatches" >
+							<h4>Hatches:</h4>
+							<div id="teleopHatchesInCargoShip">Cargo Ship:
+								<br>
+								<div class="tooltip">
+								<button onclick="hatchScore('teleop', 'hatch cargo ship', 1);">Hatch (A)</button>
+								<br>
+								Hatch In Cargo Ship Scored: <a id="hatchInCargoShipScoredTeleopDisplay">0</a>
+								<span class="tooltiptext">Did they place a hatch on cargo ship?</span></div>
+								<br>
+							</div>
+							<h6></h6>
+							<div id="teleopHatchesInRocket">Rocket:
+								<br>
+								<div class="tooltip">
+								<button onclick="hatchScore('teleop', 'hatch low', 1);">Hatch Low (S)</button>
+								<br>
+								Hatch In Low Rocket Scored: <a id="hatchInLowRocketScoredTeleopDisplay">0</a>
+								<span class="tooltiptext">Did they place a hatch on lowest level of rocket?</span></div>
+								<br>
+								<div class="tooltip">
+								<button onclick="hatchScore('teleop', 'hatch middle', 1);">Hatch Middle (D)</button>
+								<br>
+								Hatch In Middle Rocket Scored: <a id="hatchInMiddleRocketScoredTeleopDisplay">0</a>
+								<span class="tooltiptext">Did they place a hatch on middle level of rocket?</span></div>
+								<br>
+								<div class="tooltip">
+								<button onclick="hatchScore('teleop', 'hatch high', 1);">Hatch High (F)</button>
+								<br>
+								Hatch In High Rocket Scored: <a id="hatchInHighRocketScoredTeleopDisplay">0</a>
+								<span class="tooltiptext">Did they place a hatch on highest level of rocket?</span></div>
+								<br>
+							</div>
+							<br>
+							<h1></h1>
+							<div class="tooltip">
+							<button onclick="drop('teleop', 1);">Drop (Space)</button>
+							<br>
+							Items Dropped: <a id="itemsDroppedTeleopDisplay">0</a>
+							<span class="tooltiptext">Did they drop the object they were carrying?</span></div>
+						</td>
+						<td id="teleopCargo" >
+							<h4>Cargo:</h4>
+							<div id="teleopCargoInCargoShip">Cargo Ship:
+								<br>
+								<div class="tooltip">
+								<button onclick="cargoScore('teleop', 'cargo ship', 1);">Cargo (Q)</button>
+								<br>
+								Cargo In Cargo Ship Scored: <a id="cargoInCargoShipScoredTeleopDisplay">0</a>
+								<span class="tooltiptext">Did they place cargo in cargo ship?</span></div>
+								<br>
+							</div>
+							<h6></h6>
+							<div id="teleopCargoInRocket">Rocket:
+								<br>
+								<div class="tooltip">
+								<button onclick="cargoScore('teleop', 'cargo low', 1);">Cargo Low (W)</button>
+								<br>
+								Cargo In Low Rocket Scored: <a id="cargoInLowRocketScoredTeleopDisplay">0</a>
+								<span class="tooltiptext">Did they place cargo in lowest level of rocket?</span></div>
+								<br>
+								<div class="tooltip">
+								<button onclick="cargoScore('teleop', 'cargo middle', 1);">Cargo Middle (E)</button>
+								<br>
+								Cargo In Middle Rocket Scored: <a id="cargoInMiddleRocketScoredTeleopDisplay">0</a>
+								<span class="tooltiptext">Did they place cargo in middle level of rocket?</span></div>
+								<br>
+								<div class="tooltip">
+								<button onclick="cargoScore('teleop', 'cargo high', 1);">Cargo High (R)</button>
+								<br>
+								Cargo In High Rocket Scored: <a id="cargoInHighRocketScoredTeleopDisplay">0</a>
+								<span class="tooltiptext">Did they place cargo in highest level of rocket?</span></div>
+								<br>
+							</div>
+							<br>
+							<h1></h1>
+							<div class="tooltip">
+							<button onclick="undoScore('teleop');">Undo Score (Z)</button>
+							<span class="tooltiptext">For when you make the mistakes relating to score.</span></div>
+							<br>
+							<div class="tooltip">
+							<button onclick="undoDrop('teleop');">Undo Drop (C)</button>
+							<span class="tooltiptext">For when you make the mistakes relating to dropping stuff.</span></div>
+						</td>	
+					</table>
+                </div>
+                <div id="teleopScoring_center">
+                    <h3>Climbing</h3>
+                    <div class="tooltip">
+                    <form action=" ">
+							<input id="NoClimb" type="radio" name="position"> No Climb<br>
+                            <input id="Level1" type="radio" name="position"> Level 1<br>
+                            <input id="Level2" type="radio" name="position"> Level 2<br>
+                            <input id="Level3" type="radio" name="position"> Level 3<br>
+                        </form>
+                        <span class="tooltiptext">What level did they climb to?</span></div>
+                        <br>
+                        <div class="tooltip">Climb Time: <a id="climbTime">0 seconds</a>
+                            <div id="shortslider">
+                            <input class="bar" type="range" id ="climbSpeedSlider" min="0" max="30" value ="0" onchange="updateData();">
+                            <span class="highlight"></span>
+                            </div>   
+                        <span class="tooltiptext">How long did it take them to climb?</span></div>
+                        <br>
+                    <div class="tooltip">
+                    Climb Succesful: <input type="checkbox" id="climbSuccess" onchange="updateData();">
+                    <span class="tooltiptext">Did they succesfully climb?</span></div>
+                    <br>  
+                    <div class="tooltip">Assist Climb: <input type="checkbox" id="assistClimb" onchange="updateData();"><span class="tooltiptext">Did they help someone else climb?</span></div>
+                    <br><br>
+                </div>
+                <div id="teleopScoring_right">
+                    <h3>Penalties</h3>
+                    <div class="tooltip">
+                    <button onclick="penalty('teleop', 'penalty');">Penalty (J)</button>
+                    <span class="tooltiptext">Did the robot get a penalty?</span></div>
+                    
+                    <div class="tooltip">
+                    <button onclick="penalty('teleop', 'technical');">Technical Foul (K)</button>
+                    <span class="tooltiptext">Did the robot get a tech foul?</span></div>
+                    <br>
+                    Penalties: <a id="penaltyDisplayTele">0</a>
+                    <br>
+                    Technical Fouls: <a id="technicalDisplayTele">0</a>
+                    <br>
+                    <div class="tooltip">
+                    <button onclick="undoPenalty();">Undo Penalty (X)</button>
+                    <span class="tooltiptext">For when you accidentally gave out a foul.</span></div>
+                    <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="PostMatch">
+            <!-- ----------------------------- -->
+            <!-- ----------Post Match--------- -->
+            <!-- ----------------------------- -->
+
+            <!--Bad Human Player: <input type="checkbox" id="humanPlayerAbility""><br>-->
+            <div class="tooltip">
+            Is Cheesy Poofs: <input type="checkbox" id="isTheyCheezyPoofs">
+            <span class="tooltiptext">You should probably set Overall Rating to Top Team in that case.</span></div>
+            <br>
+            <div class="tooltip">
+            Died/No Show: <input type="checkbox" id="diedNoShow">
+            <span class="tooltiptext">If the robot wasn't on the field or died for a significant amount of the match, check this box.</span></div>
+            <br>
+            <div class="tooltip">
+            Can High Place: <input type="checkbox" id="canPlaceHigh">
+            <span class="tooltiptext">Could they place things on the top of the rocket?</span></div>
+            <br>
+            <div class="tooltip">
+            Can Do Mid: <input type="checkbox" id="canPlaceMid">
+            <span class="tooltiptext">Could they place things on the middle of the rocket?</span></div>
+            <br>
+            <div class="tooltip">
+            Can Do Low: <input type="checkbox" id="canPlaceLow">
+            <span class="tooltiptext">Could they place things at bottom of rocket or cargo ship?</span></div>
+            <br>
+            <div class="tooltip">
+            Can Do Floor Pickup: <input type="checkbox" id="canFloorPickup">
+            <span class="tooltiptext">Can they pick up hatches off the floor?</span></div>
+            <br><br>
+            <div class="tooltip">
+            Driver Rating : <a id="driverRatingDisplay">Little or No Movement</a>
+            <div id="shortslider">
+            <input class="bar" type="range" id ="driverRating" min="0" max="3" value ="0" onchange="updateData();">
+            <span class="highlight"></span>
+            <span class="tooltiptext">How well did they drive?</span></div>
+            </div>
+            <br>
+            <div class="tooltip">
+            Defense Rating : <a id="defenseRatingDisplay">Little or No Movement</a>
+            <div id="shortslider">
+            <input class="bar" type="range" id ="defenseRating" min="0" max="3" value ="0" onchange="updateData();">
+            <span class="highlight"></span>
+            <span class="tooltiptext">Did they play defense, and if so how well?</span></div>
+            </div>
+            <br>
+            <div class="tooltip">
+            Overall Rating : <a id="overallRatingDisplay">Do Not Pick</a>
+            <div id="shortslider">
+            <input class="bar" type="range" id ="overallRating" min="0" max="3" value ="0" onchange="updateData();">
+            <span class="highlight"></span>
+            <span class="tooltiptext">Should we pick them?</span></div>
+            </div>
+            <br>
+            <textarea placeholder="Comments" id="comments"></textarea>
+            <br>
+            <button id="submitReport" onclick="submitReport();">Submit Report</button>
+        </div>
+
+        <div id="MatchHistory">
+            <textarea id="HistoryCSV"></textarea>
+            <br>
+            <button onclick="$( '#historyPass').show(100,null);">Clear History</button>
+            <div id="historyPass">
+                Enter Password to Clear: <input type="text" id="history_password" placeholder="Password">
+                <br>
+                <button onclick="clearHistory();">Confirm</button>
+            </div>
+        </div>
+
+        <div id="About">
+            2019 Scouting Tool for Destination Deep Space. Updated each year by students and mentors from FRC 1736 Robot Casserole.
+            <br><br>
+            Andrew Gurik :: Nick Dunne :: Aaron Thune :: Dan Thune :: Tim Delaney :: Zach Yarnot :: Jack Collins :: Tom Millard :: <div class="tooltip">Zoe Schmidt<span class="tooltiptext">Yo.</span></div> :: <div class="tooltip">Miles Hankins <span class="tooltiptext">That's me!</span></div> :: Robert Holeman
+            <br><br>
+			Also, a special thanks to Sir Alfred Mufasa Commit the Frog
+			<br><br>
+            <a class="downloadLink" href="data/matchData.csv" download>Download CSV data</a>
+        </div>
+
+        <script type="text/javascript">
+            $('ul.tabs').each(function(){
+                // For each set of tabs, we want to keep track of
+                // which tab is active and it's associated content
+                var $active, $content, $links = $(this).find('a');
+
+                // If the location.hash matches one of the links, use that as the active tab.
+                // If no match is found, use the first link as the initial active tab.
+                $active = $($links.filter('[href=" '+location.hash+' "]')[0] || $links[0]);
+                $active.addClass('active');
+                $content = $($active.attr('href'));
+
+                // Hide the remaining content
+                $links.not($active).each(function () {
+                    $($(this).attr('href')).hide();
+                });
+
+                // Bind the click event handler
+                $(this).on('click', 'a', function(e){
+                    // Make the old tab inactive.
+                    $active=$(document.getElementsByClassName("active")[0]);
+                    $content=$(document.getElementsByClassName("active")[0].getAttribute("href"));
+                    $active.removeClass('active');
+                    $content.hide();
+
+                    // Update the variables with the new link and content
+                    $active = $(this);
+                    $content = $($(this).attr('href'));
+
+                    // Make the tab active.
+                    $active.addClass('active');
+                    $content.show();
+
+                    // Prevent the anchor's default click action
+                    e.preventDefault();
+                
+                });
+                
+                
+                
+            });
+            
+                
+            $("#historyPass").hide(0,null);
+            document.getElementById("MatchHistoryLink").onclick = function (){
+                var existingData = localStorage.getItem("MatchData");
+                document.getElementById("HistoryCSV").value = existingData == null ? " " : existingData;
+            };
+        </script>
+        <script type="text/javascript" src="./js/GreenBean.js"></script>
+    </body>
 </html>
